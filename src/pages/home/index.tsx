@@ -1,14 +1,17 @@
+import React from 'react';
 import { styled } from '@mui/material/styles';
 import { Container } from '@mui/material';
-import Typography from '@mui/material/Typography';
+import UsefulInsights from '../../components/useful-insights';
 
+interface Props {
+    children: React.ReactNode;
+}
 
-
-const Home = () => {
+const Home = ({ children }: Props) => {
     return (
         <HomepageContainer>
-            <Typography variant="h4">Home Page</Typography>
-            <Typography variant="body1">This page is responsive to the theme.</Typography>
+            {children}
+            <UsefulInsights />
         </HomepageContainer>
     );
 };
@@ -16,8 +19,6 @@ const Home = () => {
 export default Home;
 
 const HomepageContainer = styled(Container)(({ theme }) => ({
-    backgroundColor: theme.palette.background.default,
     color: theme.palette.text.primary,
     minHeight: '100vh',
-    padding: theme.spacing(3),
 }));

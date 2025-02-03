@@ -14,7 +14,6 @@ const StyledTab = styled((props: StyledTabProps) => (
     justifyContent: 'center',
     textTransform: 'none',
     color: theme.palette.text.secondary,
-    backgroundColor: theme.palette.background.default,
     border: `1px solid ${theme.palette.divider}`,
     borderRadius: '999px',
     margin: '0 8px',
@@ -38,7 +37,7 @@ const StyledTab = styled((props: StyledTabProps) => (
     },
 
     '& .MuiTab-iconWrapper': {
-        color: theme.palette.primary.main,
+        color: '#4285F4',
         marginRight: '8px',
         display: 'flex',
         alignItems: 'center',

@@ -1,13 +1,16 @@
-import { useState, useEffect } from 'react';
-import './App.css'
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useState, useEffect, useRef } from 'react';
+import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { ThemeProvider as StyledComponentsThemeProvider } from 'styled-components';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CssBaseline } from '@mui/material';
 import Home from './pages/home';
 import Results from './pages/results';
 import Layout from './layout';
+import SearchArea from './components/searchArea';
+import CheapFlights from './components/cheap-flights';
 
+const queryClient = new QueryClient();
 
 function App() {
   const [themeMode, setThemeMode] = useState<'light' | 'dark' | 'device'>(
@@ -22,7 +25,7 @@ function App() {
     palette: {
       mode: mode === 'device' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : mode,
       primary: {
-        main: '#1976d2',
+        main: '#202124',
         light: '#e3f2fd',
       },
       divider: '#bdbdbd',
@@ -32,21 +35,59 @@ function App() {
   // Create the theme
   const theme = createTheme(getDesignTokens(themeMode));
 
+  // Search local state
+  const [tripType, setTripType] = useState<string>('Round trip');
+  const [passengers, setPassengers] = useState({
+    adults: 1,
+    children: 0,
+    infantsSeat: 0,
+    infantsLap: 0,
+  });
+  const [classType, setClassType] = useState<string>('Economy');
+  const [departure, setDeparture] = useState<string>('');
+  const [returnDate, setReturnDate] = useState<string>('');
+  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
+  const anchorRef = useRef<HTMLDivElement | null>(null);
+
   return (
-    <ThemeProvider theme={theme}>
-      <StyledComponentsThemeProvider theme={theme}>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
         <CssBaseline />
         <Layout themeMode={themeMode} setThemeMode={setThemeMode}>
           <Router>
             <Routes>
-              <Route path='/' element={<Home />} />
+              <Route
+                path='/'
+                element={
+                  <Home>
+                    <SearchArea
+                      themeMode={themeMode}
+                      tripType={tripType}
+                      passengers={passengers}
+                      anchorRef={anchorRef}
+                      classType={classType}
+                      dropdownOpen={dropdownOpen}
+                      departure={departure}
+                      returnDate={returnDate}
+                      setClassType={setClassType}
+                      setDeparture={setDeparture}
+                      setReturnDate={setReturnDate}
+                      setDropdownOpen={setDropdownOpen}
+                      setTripType={setTripType}
+                      setPassengers={setPassengers}
+                    />
+                    <CheapFlights thememode={themeMode} />
+                    
+                  </Home>
+                }
+              />
               <Route path='/results' element={<Results />} />
             </Routes>
           </Router>
         </Layout>
-      </StyledComponentsThemeProvider>
-    </ThemeProvider>
-  )
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
 }
 
-export default App
+export default App;

@@ -84,7 +84,8 @@ const Header: React.FC<HeaderProps> = ({ themeMode, setThemeMode }) => {
 
 export default Header;
 
-const ToolbarContainer = styled(Toolbar)(() => ({
+const ToolbarContainer = styled(Toolbar)(({theme}) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#202124' : theme.palette.background.default,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
