@@ -57,8 +57,6 @@ const fetchFlights = async ({
         url.searchParams.append("returnDate", returnDate);
     }
 
-    console.log('i ran');
-
     try {
         const response = await fetch(url.toString(), {
             method: "GET",

@@ -84,7 +84,7 @@ function App() {
 
   const shouldFetch = !!searchState.places.departure && !!searchState.places.destination && !!searchState.dates.departure;
 
-  const { data: flightResults, isLoading: flightsLoading } = useQuery({
+  const { data: flightResults, isLoading: flightsLoading, isError: flightsError } = useQuery({
     queryKey: ["flightResults", searchState],
     queryFn: () =>
       fetchFlights({
@@ -98,7 +98,6 @@ function App() {
       }),
     enabled: triggerSearch && shouldFetch,
   });
-  console.log(flightResults)
   const handleSearchClick = () => {
     if (shouldFetch) {
       setTriggerSearch(true);
@@ -137,10 +136,15 @@ function App() {
                 </Home>
               }
             />
-            <Route path="/results" element={<Results
-              loading={flightsLoading}
-              flightResults={flightResults}
-            />} />
+            <Route
+              path="/results"
+              element={
+                <Results
+                  error={flightsError}
+                  loading={flightsLoading}
+                  flightResults={flightResults}
+                  searchState={searchState}
+                />} />
           </Routes>
         </Router>
       </Layout>
