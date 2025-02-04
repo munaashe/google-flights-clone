@@ -128,12 +128,13 @@ const StyledGridContainer = styled(Box)(({ theme }) => ({
     },
 }));
 
-const StyledCard = styled(Card)(() => ({
+const StyledCard = styled(Card)(({ theme }) => ({
     borderRadius: 16,
     boxShadow: 'none',
     border: 'none',
     padding: '0px',
     margin: '0px',
+    backgroundColor: theme.palette.mode === 'dark' ? '#202124' : theme.palette.background.default,
     transition: 'transform 0.2s',
     '&:hover': {
         transform: 'scale(1.05)',

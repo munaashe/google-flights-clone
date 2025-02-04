@@ -1,48 +1,81 @@
 import { FetchFlightsProps } from "../../utils/types";
 
-const fetchFlights = async ({ origin, destination, departureDate, returnDate }: FetchFlightsProps) => {
-    const url = new URL(`${import.meta.env.SKY_SCRAPPER_BASE_URL}searchFlights`);
-    url.searchParams.append('origin', origin);
-    url.searchParams.append('destination', destination);
-    url.searchParams.append('date', departureDate);
+const API_BASE_URL = import.meta.env.VITE_SKY_SCRAPPER_BASE_URL;
+const API_KEY = import.meta.env.VITE_RAPIDAPI_KEY;
+const API_HOST = "sky-scrapper.p.rapidapi.com";
 
-    if (returnDate) {
-        url.searchParams.append('returnDate', returnDate);
-    }
+/**
+ * Fetch airport suggestions for autocomplete input.
+ * @param query - User input (city or airport name).
+ */
+const fetchAirportSuggestions = async (query: string) => {
+    if (!query) return [];
 
+    const url = new URL(`${API_BASE_URL}searchAirport`);
+    url.searchParams.append("query", query);
     try {
         const response = await fetch(url.toString(), {
-            method: 'GET',
+            method: "GET",
             headers: {
-                'x-rapidapi-key': import.meta.env.SKY_SCRAPPER_API_KEY,
-                'x-rapidapi-host': 'sky-scrapper.p.rapidapi.com'
+                "x-rapidapi-key": API_KEY,
+                "x-rapidapi-host": API_HOST,
             },
         });
 
         if (!response.ok) {
-            throw new Error('Failed to fetch flights');
+            throw new Error("Failed to fetch airport suggestions");
         }
 
         return response.json();
     } catch (error) {
-        console.error(error);
-        throw error;
+        console.error("Error fetching airport suggestions:", error);
+        return [];
     }
 };
 
-const fetchDestinations = async (cityName: string) => {
-    const response = await fetch(
-        `${import.meta.env.VITE_TRAVEL_ADVISOR_BASE_URL}search?query=${cityName}&limit=4`,
-        {
-            method: 'GET',
-            headers: {
-                'x-rapidapi-key': import.meta.env.SKY_SCRAPPER_API_KEY,
-                'x-rapidapi-host': 'travel-advisor.p.rapidapi.com',
-            },
-        }
-    );
-    if (!response.ok) throw new Error('Failed to fetch destinations');
-    return response.json();
-};
+/**
+ * Fetch flight details based on user search.
+ * Supports both one-way and round-trip searches.
+ * @param params - Flight search parameters.
+ */
+const fetchFlights = async ({
+    originSkyId,
+    destinationSkyId,
+    originEntityId,
+    destinationEntityId,
+    departureDate,
+    returnDate,
+}: FetchFlightsProps) => {
+    const url = new URL(`${API_BASE_URL}searchFlights`);
+    url.searchParams.append("originSkyId", originSkyId);
+    url.searchParams.append("destinationSkyId", destinationSkyId);
+    url.searchParams.append("originEntityId", originEntityId);
+    url.searchParams.append("destinationEntityId", destinationEntityId);
+    url.searchParams.append("date", departureDate);
 
-export { fetchFlights, fetchDestinations }
+    if (returnDate) {
+        url.searchParams.append("returnDate", returnDate);
+    }
+
+    console.log('i ran');
+
+    try {
+        const response = await fetch(url.toString(), {
+            method: "GET",
+            headers: {
+                "x-rapidapi-key": API_KEY,
+                "x-rapidapi-host": API_HOST,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch flights");
+        }
+
+        return response.json();
+    } catch (error) {
+        console.error("Error fetching flights:", error);
+        throw error;
+    }
+};
+export { fetchAirportSuggestions, fetchFlights };
